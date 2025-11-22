@@ -9,24 +9,23 @@ function setup() {
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root");
   const episodeCards = episodeList.map(episode => makeCard(episode));
-  console.log(rootElem);
   rootElem.append(...episodeCards);
 }
 
 function makeCard(episode) {
   const template = document.getElementById("episodeTemplate");
   const episodeCard = template.content.cloneNode(true);
-  const episodeName = episodeCard.getElementById("episodeName");
-  const episodeCode = episodeCard.getElementById("episodeCode");
-  const episodeImage = episodeCard.getElementById("episodeImage");
-  const episodeLink = episodeCard.getElementById("episodeLink");
-  const episodeSummary = episodeCard.getElementById("episodeSummary");
+  const episodeName = episodeCard.querySelector(".episodeName");
+  const episodeCode = episodeCard.querySelector(".episodeCode");
+  const episodeImage = episodeCard.querySelector(".episodeImage");
+  const episodeLink = episodeCard.querySelector(".episodeLink");
+  const episodeSummary = episodeCard.querySelector(".episodeSummary");
   episodeName.textContent = episode.name;
   episodeCode.textContent = `${getEpisodeCode(episode.season, episode.number)}`;
   episodeImage.src = episode.image ? episode.image.medium : 'https://placehold.co/250x140?text=NO+IMAGE+AVAILABLE';
   episodeImage.alt = episode.image ? `${episode.name} thumbnail` : 'No image available';
   episodeLink.href = episode.url;
-  episodeSummary.innerHTML = episode.summary || "No summary available.";
+  episodeSummary.textContent = episode.summary ? episode.summary.slice(3,-4) : "No summary available.";
   return episodeCard;
 }
 
