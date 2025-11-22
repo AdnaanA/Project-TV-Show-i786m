@@ -34,26 +34,26 @@
   margin-bottom: 1rem;
 }
 
-#episodeLink {
+.episodeLink {
   color: black;
   text-decoration: none;
   display: inline-block;
   width: 100%;
 }
 
-#episodeImage {
+.episodeImage {
   align-self: center;
   width: 90%;
   object-fit: cover;
 }
 
-#episodeSummary {
+.episodeSummary {
   padding: 0 1.2rem 1.2rem 1.2rem;
   font-size: medium;
   line-height: 1.4rem;
   color: dimgray;
   text-align: left;
-  flex-grow: 1;
+   flex-grow: 1;
 }
 footer {
   text-align: center;
