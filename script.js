@@ -13,7 +13,7 @@ function setup() {
   episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
 
   searchInput.addEventListener("input", () => {
-    const searchTerm = searchInput.value.trim().toLowerCase();
+    const searchTerm = searchInput.value.trim();
 
     // CLEAR SEARCH = SHOW ALL
     if (searchTerm === "") {
@@ -23,12 +23,17 @@ function setup() {
       return;
     }
 
-    const filteredEpisodes = allEpisodes.filter(
-      (episode) =>
-        episode.name.toLowerCase().includes(searchTerm) ||
-        (episode.summary && episode.summary.toLowerCase().includes(searchTerm))
-    );
+    const filteredEpisodes = allEpisodes.filter((episode) => {
+      const nameMatch = episode.name.includes(searchTerm);
 
+      const summaryText = episode.summary
+        ? episode.summary.replace(/<[^>]*>/g, "")
+        : "";
+
+      const summaryMatch = summaryText.includes(searchTerm);
+
+      return nameMatch || summaryMatch;
+    });
     rootElem.innerHTML = "";
     makePageForEpisodes(filteredEpisodes);
 
