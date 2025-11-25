@@ -12,9 +12,13 @@ Look at their level 100 implementation.
 
 Compare their implementation to yours. Think:
 1. How is it different?
+A. My partner used template in html to create the design while i used js to create the elements.
 2. What do you prefer about your implementation?
+A. creating the elements in js seem simpler and efficient. And the summary truncation makes the cards look uniform.
 3. What do you prefer about their implementation?
+A. The use of Semantic HTML which improves accessibility, SEO, and structure.
 4. What did you learn that you didn't know before?
+A. That i could use map function to loop through every item in the array to show the move cards.
 
 They should do the same with your repository.
 
