@@ -2,13 +2,43 @@
 function setup() {
   const allEpisodes = getAllEpisodes();
   console.log(allEpisodes);
-  
-  makePageForEpisodes(allEpisodes);
-}
 
+  makePageForEpisodes(allEpisodes);
+
+  const searchInput = document.getElementById("searchInput");
+  const episodeCount = document.getElementById("episodeCount");
+  // This line is the real troublemaker:
+  const rootElem = document.getElementById("root");
+
+  episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
+
+  searchInput.addEventListener("input", () => {
+    const searchTerm = searchInput.value.trim().toLowerCase();
+
+    // CLEAR SEARCH = SHOW ALL
+    if (searchTerm === "") {
+      rootElem.innerHTML = "";
+      makePageForEpisodes(allEpisodes);
+      episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
+      return;
+    }
+
+    const filteredEpisodes = allEpisodes.filter(
+      (episode) =>
+        episode.name.toLowerCase().includes(searchTerm) ||
+        (episode.summary && episode.summary.toLowerCase().includes(searchTerm))
+    );
+
+    rootElem.innerHTML = "";
+    makePageForEpisodes(filteredEpisodes);
+
+    episodeCount.textContent = `${filteredEpisodes.length} / ${allEpisodes.length}`;
+  });
+}
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root");
-  const episodeCards = episodeList.map(episode => makeCard(episode));
+  const episodeCards = episodeList.map((episode) => makeCard(episode));
+  // You’re appending episodes inside the same container that holds the template — which causes weird behavior and DOM confusion.
   rootElem.append(...episodeCards);
 }
 

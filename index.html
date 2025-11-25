@@ -11,7 +11,13 @@
 </head>
 
 <body>
-  <div id="root">
+  <div class="search-bar">
+    <label for="searchInput">Search Episodes:</label>
+    <input type="text" id="searchInput" placeholder="Type to search..." />
+    <span id="episodeCount"></span>
+  </div>
+  <!--seperate root from the episodetemplate-->
+  <div id="root"></div>
     <template id="episodeTemplate">
       <article class="episode">
         <h3>
@@ -24,7 +30,6 @@
         <div class="episodeSummary"></div>
       </article>
     </template>
-  </div>
   <footer>Data from : <a href="https://www.tvmaze.com/">TVMaze.com</a></footer>
   <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
   <script src="episodes.js"></script>
