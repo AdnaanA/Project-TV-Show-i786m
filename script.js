@@ -44,6 +44,36 @@ function setup() {
 
     episodeCount.textContent = `${filteredEpisodes.length} / ${allEpisodes.length}`;
   });
+
+  // DROPDOWN TO SELECT EPISODE
+  const episodeSelect = document.getElementById("episodeSelect");
+  allEpisodes.forEach((episode, index) => {
+    const option = document.createElement("option");
+    option.value = index;
+
+    // ONLY show season and episode number
+    option.textContent = getEpisodeCode(episode.season, episode.number);
+
+    episodeSelect.appendChild(option);
+  });
+
+  episodeSelect.addEventListener("change", () => {
+    const selectedIndex = episodeSelect.value;
+
+    // SHOW ALL EPISODES IF "ALL EPISODES" IS SELECTED
+    if (selectedIndex === "all") {
+      rootElem.innerHTML = "";
+      makePageForEpisodes(allEpisodes);
+      episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
+      return;
+    }
+
+    // SHOW SELECTED EPISODE
+    const selectedEpisode = allEpisodes[selectedIndex];
+    rootElem.innerHTML = "";
+    makePageForEpisodes([selectedEpisode]);
+    episodeCount.textContent = `1 / ${allEpisodes.length}`;
+  });
 }
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root");
@@ -72,6 +102,8 @@ function makeCard(episode) {
 function getEpisodeCode(season, episode){
   return `S${String(season).padStart(2, '0')}E${String(episode).padStart(2, '0')}`;
 }
+
+
 
 window.onload = setup;
 

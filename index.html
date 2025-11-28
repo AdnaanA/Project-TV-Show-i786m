@@ -12,11 +12,26 @@
 
 <body>
   <div class="search-bar">
-    <label for="searchInput">Search Episodes:</label>
-    <input type="text" id="searchInput" placeholder="Type to search..." />
+
+    <div class="search-select-wrapper">
+      <div class="select-box">
+        <label for="episodeSelect">Select Episode:</label>
+        <select id="episodeSelect">
+          <option value="all">All Episodes</option>
+        </select>
+      </div>
+
+      <div class="search-box">
+        <label for="searchInput">Search Episodes:</label>
+        <input type="text" id="searchInput" placeholder="Type to search..." />
+      </div>
+    
+    </div>
+  
     <span id="episodeCount"></span>
+  
   </div>
-  <!--seperate root from the episodetemplate-->
+    <!--seperate root from the -->
   <div id="root"></div>
     <template id="episodeTemplate">
       <article class="episode">
