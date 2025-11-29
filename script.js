@@ -52,7 +52,7 @@ function setup() {
     option.value = index;
 
     // ONLY show season and episode number
-    option.textContent = getEpisodeCode(episode.season, episode.number);
+    option.textContent = getEpisodeCode(episode.season, episode.number) + ` - ` + episode.name;
 
     episodeSelect.appendChild(option);
   });
