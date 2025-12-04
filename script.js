@@ -24,7 +24,9 @@ async function setup() {
 
 		// FILTER EPISODES BASED ON SEARCH TERM
 		const filteredEpisodes = allEpisodes.filter((episode) => {
-			const nameMatch = episode.name.toLowerCase().includes(searchTerm);
+			const nameMatch = (episode.name || '')
+				.toLowerCase()
+				.includes(searchTerm);
 
 			const summaryText = episode.summary
 				? getTextFromHTML(episode.summary)
