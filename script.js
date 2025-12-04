@@ -124,10 +124,13 @@ function makeCard(episode, episodeTemplate) {
 }
 
 function getEpisodeCode(season, episode) {
-	return `S${String(season).padStart(2, '0')}E${String(episode).padStart(
-		2,
-		'0'
-	)}`;
+	// Validate that season and episode are valid numbers
+	const validSeason = Number.isInteger(season) && season > 0 ? season : 0;
+	const validEpisode = Number.isInteger(episode) && episode > 0 ? episode : 0;
+
+	return `S${String(validSeason).padStart(2, '0')}E${String(
+		validEpisode
+	).padStart(2, '0')}`;
 }
 
 function getTextFromHTML(html) {
