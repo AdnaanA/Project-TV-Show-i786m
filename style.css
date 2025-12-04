@@ -71,3 +71,13 @@ header {
   gap: 2rem;
   flex-wrap: wrap;
 }
+
+#searchInput.search-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#searchInput.search-enabled {
+  opacity: 1;
+  cursor: text;
+}

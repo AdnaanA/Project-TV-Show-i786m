@@ -1,10 +1,12 @@
 async function setup() {
 	const rootElem = document.getElementById('root');
+	const episodeTemplate = document.getElementById('episodeTemplate');
 	const searchInput = document.getElementById('searchInput');
 	const episodeCount = document.getElementById('episodeCount');
 
 	const allEpisodes = await getAllEpisodes(rootElem);
-	makePageForEpisodes(allEpisodes, rootElem);
+
+	makePageForEpisodes(allEpisodes, rootElem, episodeTemplate);
 
 	episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
 
@@ -15,7 +17,7 @@ async function setup() {
 		// CLEAR SEARCH = SHOW ALL
 		if (searchTerm === '') {
 			rootElem.innerHTML = '';
-			makePageForEpisodes(allEpisodes, rootElem);
+			makePageForEpisodes(allEpisodes, rootElem, episodeTemplate);
 			episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
 			return;
 		}
@@ -32,7 +34,7 @@ async function setup() {
 			return nameMatch || summaryMatch;
 		});
 		rootElem.innerHTML = '';
-		makePageForEpisodes(filteredEpisodes, rootElem);
+		makePageForEpisodes(filteredEpisodes, rootElem, episodeTemplate);
 
 		episodeCount.textContent = `${filteredEpisodes.length} / ${allEpisodes.length}`;
 	});
@@ -58,11 +60,12 @@ async function setup() {
 		// SHOW ALL EPISODES IF "ALL EPISODES" IS SELECTED
 		if (selectedIndex === 'all') {
 			rootElem.innerHTML = '';
-			makePageForEpisodes(allEpisodes, rootElem);
+			makePageForEpisodes(allEpisodes, rootElem, episodeTemplate);
 			episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
 			// Enable search
 			searchInput.disabled = false;
-			searchInput.style.opacity = '1';
+			searchInput.classList.remove('search-disabled');
+			searchInput.classList.add('search-enabled');
 			searchInput.placeholder = 'Type to search...';
 			return;
 		}
@@ -70,43 +73,51 @@ async function setup() {
 		// SHOW SELECTED EPISODE
 		const selectedEpisode = allEpisodes[selectedIndex];
 		rootElem.innerHTML = '';
-		makePageForEpisodes([selectedEpisode], rootElem);
+		makePageForEpisodes([selectedEpisode], rootElem, episodeTemplate);
 		episodeCount.textContent = `1 / ${allEpisodes.length}`;
 		// Disable search
 		searchInput.disabled = true;
-		searchInput.style.opacity = '0.5';
+		searchInput.classList.remove('search-enabled');
+		searchInput.classList.add('search-disabled');
 		searchInput.placeholder = 'Select "All Episodes" to search';
 		searchInput.value = ''; // Clear search
 	});
 }
-function makePageForEpisodes(episodeList, rootElem) {
-	const episodeCards = episodeList.map((episode) => makeCard(episode));
+function makePageForEpisodes(episodeList, rootElem, episodeTemplate) {
+	const episodeCards = episodeList.map((episode) =>
+		makeCard(episode, episodeTemplate)
+	);
 	rootElem.append(...episodeCards);
 }
 
-function makeCard(episode) {
-	const template = document.getElementById('episodeTemplate');
-	const episodeCard = template.content.cloneNode(true);
+function makeCard(episode, episodeTemplate) {
+	const episodeCard = episodeTemplate.content.cloneNode(true);
 	const episodeName = episodeCard.querySelector('.episodeName');
 	const episodeCode = episodeCard.querySelector('.episodeCode');
 	const episodeImage = episodeCard.querySelector('.episodeImage');
 	const episodeLink = episodeCard.querySelector('.episodeLink');
 	const episodeSummary = episodeCard.querySelector('.episodeSummary');
-	episodeName.textContent = episode.name;
-	episodeCode.textContent = `${getEpisodeCode(
-		episode.season,
-		episode.number
-	)}`;
-	episodeImage.src = episode.image
+
+	// Validate required fields
+	episodeName.textContent = episode.name || 'Unknown Episode';
+	episodeCode.textContent =
+		episode.season && episode.number
+			? getEpisodeCode(episode.season, episode.number)
+			: 'N/A';
+
+	episodeImage.src = episode.image?.medium
 		? episode.image.medium
 		: 'https://placehold.co/250x140?text=NO+IMAGE+AVAILABLE';
-	episodeImage.alt = episode.image
+	episodeImage.alt = episode.image?.medium
 		? `${episode.name} thumbnail`
 		: 'No image available';
-	episodeLink.href = episode.url;
+
+	episodeLink.href = episode.url || '#';
+
 	episodeSummary.textContent = episode.summary
 		? getTextFromHTML(episode.summary)
 		: 'No summary available.';
+
 	return episodeCard;
 }
 
