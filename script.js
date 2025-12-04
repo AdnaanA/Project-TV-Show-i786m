@@ -1,109 +1,203 @@
-//You can edit ALL of the code here
-function setup() {
-  const allEpisodes = getAllEpisodes();
-  console.log(allEpisodes);
+async function setup() {
+	const rootElem = document.getElementById('root');
+	const episodeTemplate = document.getElementById('episodeTemplate');
+	const searchInput = document.getElementById('searchInput');
+	const episodeCount = document.getElementById('episodeCount');
 
-  makePageForEpisodes(allEpisodes);
+	const allEpisodes = await getAllEpisodes(rootElem);
 
-  const searchInput = document.getElementById("searchInput");
-  const episodeCount = document.getElementById("episodeCount");
-  // This line is the real troublemaker:
-  const rootElem = document.getElementById("root");
+	makePageForEpisodes(allEpisodes, rootElem, episodeTemplate);
 
-  episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
+	episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
 
-  // LIVE SEARCH FUNCTIONALITY
-  searchInput.addEventListener("input", () => {
-    const searchTerm = searchInput.value.trim();
+	// LIVE SEARCH FUNCTIONALITY
+	searchInput.addEventListener('input', () => {
+		const searchTerm = searchInput.value.trim().toLowerCase();
 
-    // CLEAR SEARCH = SHOW ALL
-    if (searchTerm === "") {
-      rootElem.innerHTML = "";
-      makePageForEpisodes(allEpisodes);
-      episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
-      return;
-    }
+		// CLEAR SEARCH = SHOW ALL
+		if (searchTerm === '') {
+			rootElem.innerHTML = '';
+			makePageForEpisodes(allEpisodes, rootElem, episodeTemplate);
+			episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
+			return;
+		}
 
-    // FILTER EPISODES BASED ON SEARCH TERM
-    const filteredEpisodes = allEpisodes.filter((episode) => {
-      const nameMatch = episode.name.includes(searchTerm);
+		// FILTER EPISODES BASED ON SEARCH TERM
+		const filteredEpisodes = allEpisodes.filter((episode) => {
+			const nameMatch = (episode.name || '')
+				.toLowerCase()
+				.includes(searchTerm);
 
-      // Remove HTML tags from summary for accurate searching
-      const summaryText = episode.summary
-        ? episode.summary.replace(/<[^>]*>/g, "")
-        : "";
+			const summaryText = episode.summary
+				? getTextFromHTML(episode.summary)
+				: '';
+			const summaryMatch = summaryText.toLowerCase().includes(searchTerm);
 
-        // Check if summary includes the search term
-      const summaryMatch = summaryText.includes(searchTerm);
+			return nameMatch || summaryMatch;
+		});
+		rootElem.innerHTML = '';
+		makePageForEpisodes(filteredEpisodes, rootElem, episodeTemplate);
 
-      // Return true if either name or summary matches
-      return nameMatch || summaryMatch;
-    });
-    rootElem.innerHTML = "";
-    makePageForEpisodes(filteredEpisodes);
+		episodeCount.textContent = `${filteredEpisodes.length} / ${allEpisodes.length}`;
+	});
 
-    episodeCount.textContent = `${filteredEpisodes.length} / ${allEpisodes.length}`;
-  });
+	// DROPDOWN TO SELECT EPISODE
+	const episodeSelect = document.getElementById('episodeSelect');
+	allEpisodes.forEach((episode, index) => {
+		const option = document.createElement('option');
+		option.value = index;
 
-  // DROPDOWN TO SELECT EPISODE
-  const episodeSelect = document.getElementById("episodeSelect");
-  allEpisodes.forEach((episode, index) => {
-    const option = document.createElement("option");
-    option.value = index;
+		// ONLY show season and episode number
+		option.textContent =
+			getEpisodeCode(episode.season, episode.number) +
+			` - ` +
+			episode.name;
 
-    // ONLY show season and episode number
-    option.textContent = getEpisodeCode(episode.season, episode.number) + ` - ` + episode.name;
+		episodeSelect.appendChild(option);
+	});
 
-    episodeSelect.appendChild(option);
-  });
+	episodeSelect.addEventListener('change', () => {
+		const selectedIndex = episodeSelect.value;
 
-  episodeSelect.addEventListener("change", () => {
-    const selectedIndex = episodeSelect.value;
+		// SHOW ALL EPISODES IF "ALL EPISODES" IS SELECTED
+		if (selectedIndex === 'all') {
+			rootElem.innerHTML = '';
+			makePageForEpisodes(allEpisodes, rootElem, episodeTemplate);
+			episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
+			// Enable search
+			searchInput.disabled = false;
+			searchInput.classList.remove('search-disabled');
+			searchInput.classList.add('search-enabled');
+			searchInput.placeholder = 'Type to search...';
+			return;
+		}
 
-    // SHOW ALL EPISODES IF "ALL EPISODES" IS SELECTED
-    if (selectedIndex === "all") {
-      rootElem.innerHTML = "";
-      makePageForEpisodes(allEpisodes);
-      episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
-      return;
-    }
-
-    // SHOW SELECTED EPISODE
-    const selectedEpisode = allEpisodes[selectedIndex];
-    rootElem.innerHTML = "";
-    makePageForEpisodes([selectedEpisode]);
-    episodeCount.textContent = `1 / ${allEpisodes.length}`;
-  });
+		// SHOW SELECTED EPISODE
+		const selectedEpisode = allEpisodes[selectedIndex];
+		rootElem.innerHTML = '';
+		makePageForEpisodes([selectedEpisode], rootElem, episodeTemplate);
+		episodeCount.textContent = `1 / ${allEpisodes.length}`;
+		// Disable search
+		searchInput.disabled = true;
+		searchInput.classList.remove('search-enabled');
+		searchInput.classList.add('search-disabled');
+		searchInput.placeholder = 'Select "All Episodes" to search';
+		searchInput.value = '';
+	});
 }
-function makePageForEpisodes(episodeList) {
-  const rootElem = document.getElementById("root");
-  const episodeCards = episodeList.map((episode) => makeCard(episode));
-  // You’re appending episodes inside the same container that holds the template — which causes weird behavior and DOM confusion.
-  rootElem.append(...episodeCards);
-}
-
-function makeCard(episode) {
-  const template = document.getElementById("episodeTemplate");
-  const episodeCard = template.content.cloneNode(true);
-  const episodeName = episodeCard.querySelector(".episodeName");
-  const episodeCode = episodeCard.querySelector(".episodeCode");
-  const episodeImage = episodeCard.querySelector(".episodeImage");
-  const episodeLink = episodeCard.querySelector(".episodeLink");
-  const episodeSummary = episodeCard.querySelector(".episodeSummary");
-  episodeName.textContent = episode.name;
-  episodeCode.textContent = `${getEpisodeCode(episode.season, episode.number)}`;
-  episodeImage.src = episode.image ? episode.image.medium : 'https://placehold.co/250x140?text=NO+IMAGE+AVAILABLE';
-  episodeImage.alt = episode.image ? `${episode.name} thumbnail` : 'No image available';
-  episodeLink.href = episode.url;
-  episodeSummary.textContent = episode.summary ? episode.summary.slice(3,-4) : "No summary available.";
-  return episodeCard;
+function makePageForEpisodes(episodeList, rootElem, episodeTemplate) {
+	const episodeCards = episodeList.map((episode) =>
+		makeCard(episode, episodeTemplate)
+	);
+	rootElem.append(...episodeCards);
 }
 
-function getEpisodeCode(season, episode){
-  return `S${String(season).padStart(2, '0')}E${String(episode).padStart(2, '0')}`;
+function makeCard(episode, episodeTemplate) {
+	const episodeCard = episodeTemplate.content.cloneNode(true);
+	const episodeName = episodeCard.querySelector('.episodeName');
+	const episodeCode = episodeCard.querySelector('.episodeCode');
+	const episodeImage = episodeCard.querySelector('.episodeImage');
+	const episodeLink = episodeCard.querySelector('.episodeLink');
+	const episodeSummary = episodeCard.querySelector('.episodeSummary');
+
+	// Validate required fields
+	episodeName.textContent = episode.name || 'Unknown Episode';
+	episodeCode.textContent =
+		episode.season && episode.number
+			? getEpisodeCode(episode.season, episode.number)
+			: 'N/A';
+
+	episodeImage.src = episode.image?.medium
+		? episode.image.medium
+		: 'https://placehold.co/250x140?text=NO+IMAGE+AVAILABLE';
+	episodeImage.alt = episode.image?.medium
+		? `${episode.name} thumbnail`
+		: 'No image available';
+
+	episodeLink.href = episode.url || '#';
+
+	episodeSummary.textContent = episode.summary
+		? getTextFromHTML(episode.summary)
+		: 'No summary available.';
+
+	return episodeCard;
 }
 
+function getEpisodeCode(season, episode) {
+	// Validate that season and episode are valid numbers
+	const validSeason = Number.isInteger(season) && season > 0 ? season : 0;
+	const validEpisode = Number.isInteger(episode) && episode > 0 ? episode : 0;
 
+	return `S${String(validSeason).padStart(2, '0')}E${String(
+		validEpisode
+	).padStart(2, '0')}`;
+}
+
+function getTextFromHTML(html) {
+	const temp = document.createElement('div');
+	temp.innerHTML = html;
+	return temp.textContent || temp.innerText || '';
+}
+
+// Fetches all episodes from the TVMaze API
+async function getAllEpisodes(rootElem) {
+	const loadingContainer = document.createElement('div');
+	loadingContainer.className = 'loading-container';
+
+	const spinner = document.createElement('div');
+	spinner.className = 'spinner';
+	loadingContainer.appendChild(spinner);
+
+	const loadingText = document.createElement('p');
+	loadingText.textContent = 'Loading episodes, please wait...';
+	loadingContainer.appendChild(loadingText);
+
+	rootElem.innerHTML = '';
+	rootElem.appendChild(loadingContainer);
+
+	try {
+		const url = 'https://api.tvmaze.com/shows/82/episodes';
+		const response = await fetch(url);
+
+		if (!response.ok) {
+			throw new Error(
+				`HTTP Error: ${response.status} ${response.statusText}`
+			);
+		}
+
+		const data = await response.json();
+		rootElem.innerHTML = '';
+		return data;
+	} catch (error) {
+		console.error('Failed to fetch episodes:', error);
+
+		const errorMessage =
+			error instanceof Error ? error.message : 'Unknown error';
+		const retryButton = document.createElement('button');
+		retryButton.textContent = 'Retry';
+		retryButton.className = 'retry-button';
+		retryButton.onclick = () => window.location.reload();
+
+		const errorContainer = document.createElement('div');
+		errorContainer.className = 'error-container';
+
+		const errorMsg = document.createElement('p');
+		errorMsg.textContent =
+			'Failed to load episodes. Please try again later.';
+		errorContainer.appendChild(errorMsg);
+
+		const errorDetails = document.createElement('p');
+		errorDetails.className = 'error-details';
+		errorDetails.textContent = `Error details: ${errorMessage}`;
+		errorContainer.appendChild(errorDetails);
+
+		errorContainer.appendChild(retryButton);
+
+		rootElem.innerHTML = '';
+		rootElem.appendChild(errorContainer);
+
+		return [];
+	}
+}
 
 window.onload = setup;
-
