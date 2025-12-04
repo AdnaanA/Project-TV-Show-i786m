@@ -3,8 +3,8 @@ async function setup() {
 	const searchInput = document.getElementById('searchInput');
 	const episodeCount = document.getElementById('episodeCount');
 
-	const allEpisodes = await getAllEpisodes();
-	makePageForEpisodes(allEpisodes);
+	const allEpisodes = await getAllEpisodes(rootElem);
+	makePageForEpisodes(allEpisodes, rootElem);
 
 	episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
 
@@ -15,7 +15,7 @@ async function setup() {
 		// CLEAR SEARCH = SHOW ALL
 		if (searchTerm === '') {
 			rootElem.innerHTML = '';
-			makePageForEpisodes(allEpisodes);
+			makePageForEpisodes(allEpisodes, rootElem);
 			episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
 			return;
 		}
@@ -32,7 +32,7 @@ async function setup() {
 			return nameMatch || summaryMatch;
 		});
 		rootElem.innerHTML = '';
-		makePageForEpisodes(filteredEpisodes);
+		makePageForEpisodes(filteredEpisodes, rootElem);
 
 		episodeCount.textContent = `${filteredEpisodes.length} / ${allEpisodes.length}`;
 	});
@@ -58,7 +58,7 @@ async function setup() {
 		// SHOW ALL EPISODES IF "ALL EPISODES" IS SELECTED
 		if (selectedIndex === 'all') {
 			rootElem.innerHTML = '';
-			makePageForEpisodes(allEpisodes);
+			makePageForEpisodes(allEpisodes, rootElem);
 			episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
 			// Enable search
 			searchInput.disabled = false;
@@ -70,7 +70,7 @@ async function setup() {
 		// SHOW SELECTED EPISODE
 		const selectedEpisode = allEpisodes[selectedIndex];
 		rootElem.innerHTML = '';
-		makePageForEpisodes([selectedEpisode]);
+		makePageForEpisodes([selectedEpisode], rootElem);
 		episodeCount.textContent = `1 / ${allEpisodes.length}`;
 		// Disable search
 		searchInput.disabled = true;
@@ -79,8 +79,7 @@ async function setup() {
 		searchInput.value = ''; // Clear search
 	});
 }
-function makePageForEpisodes(episodeList) {
-	const rootElem = document.getElementById('root');
+function makePageForEpisodes(episodeList, rootElem) {
 	const episodeCards = episodeList.map((episode) => makeCard(episode));
 	rootElem.append(...episodeCards);
 }
@@ -125,8 +124,7 @@ function getTextFromHTML(html) {
 }
 
 // Fetches all episodes from the TVMaze API
-async function getAllEpisodes() {
-	const rootElem = document.getElementById('root');
+async function getAllEpisodes(rootElem) {
 	rootElem.innerHTML = '<p>Loading episodes, please wait...</p>';
 	try {
 		const url = 'https://api.tvmaze.com/shows/82/episodes';
