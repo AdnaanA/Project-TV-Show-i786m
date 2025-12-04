@@ -82,7 +82,7 @@ async function setup() {
 		searchInput.classList.remove('search-enabled');
 		searchInput.classList.add('search-disabled');
 		searchInput.placeholder = 'Select "All Episodes" to search';
-		searchInput.value = ''; // Clear search
+		searchInput.value = '';
 	});
 }
 function makePageForEpisodes(episodeList, rootElem, episodeTemplate) {
@@ -141,7 +141,20 @@ function getTextFromHTML(html) {
 
 // Fetches all episodes from the TVMaze API
 async function getAllEpisodes(rootElem) {
-	rootElem.innerHTML = '<p>Loading episodes, please wait...</p>';
+	const loadingContainer = document.createElement('div');
+	loadingContainer.className = 'loading-container';
+
+	const spinner = document.createElement('div');
+	spinner.className = 'spinner';
+	loadingContainer.appendChild(spinner);
+
+	const loadingText = document.createElement('p');
+	loadingText.textContent = 'Loading episodes, please wait...';
+	loadingContainer.appendChild(loadingText);
+
+	rootElem.innerHTML = '';
+	rootElem.appendChild(loadingContainer);
+
 	try {
 		const url = 'https://api.tvmaze.com/shows/82/episodes';
 		const response = await fetch(url);
