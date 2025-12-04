@@ -157,13 +157,22 @@ async function getAllEpisodes(rootElem) {
 			error instanceof Error ? error.message : 'Unknown error';
 		const retryButton = document.createElement('button');
 		retryButton.textContent = 'Retry';
-		retryButton.style.marginLeft = '10px';
-		retryButton.style.padding = '5px 10px';
-		retryButton.style.cursor = 'pointer';
+		retryButton.className = 'retry-button';
 		retryButton.onclick = () => window.location.reload();
 
 		const errorContainer = document.createElement('div');
-		errorContainer.innerHTML = `<p>Failed to load episodes. Please try again later.</p><p style="font-size: 0.9em; color: #666;">Error details: ${errorMessage}</p>`;
+		errorContainer.className = 'error-container';
+
+		const errorMsg = document.createElement('p');
+		errorMsg.textContent =
+			'Failed to load episodes. Please try again later.';
+		errorContainer.appendChild(errorMsg);
+
+		const errorDetails = document.createElement('p');
+		errorDetails.className = 'error-details';
+		errorDetails.textContent = `Error details: ${errorMessage}`;
+		errorContainer.appendChild(errorDetails);
+
 		errorContainer.appendChild(retryButton);
 
 		rootElem.innerHTML = '';
