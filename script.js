@@ -60,6 +60,10 @@ async function setup() {
 			rootElem.innerHTML = '';
 			makePageForEpisodes(allEpisodes);
 			episodeCount.textContent = `${allEpisodes.length} / ${allEpisodes.length}`;
+			// Enable search
+			searchInput.disabled = false;
+			searchInput.style.opacity = '1';
+			searchInput.placeholder = 'Type to search...';
 			return;
 		}
 
@@ -68,6 +72,11 @@ async function setup() {
 		rootElem.innerHTML = '';
 		makePageForEpisodes([selectedEpisode]);
 		episodeCount.textContent = `1 / ${allEpisodes.length}`;
+		// Disable search
+		searchInput.disabled = true;
+		searchInput.style.opacity = '0.5';
+		searchInput.placeholder = 'Select "All Episodes" to search';
+		searchInput.value = ''; // Clear search
 	});
 }
 function makePageForEpisodes(episodeList) {
