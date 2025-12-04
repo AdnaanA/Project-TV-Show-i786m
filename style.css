@@ -48,7 +48,7 @@
 }
 
 .episodeSummary {
-  padding: 0 1.2rem 1.2rem 1.2rem;
+  padding: 1rem 1.2rem 1.2rem 1.2rem;
   font-size: medium;
   line-height: 1.4rem;
   color: dimgray;
@@ -61,3 +61,23 @@ footer {
   font-size: 0.9rem;
   color: black;
 }
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 0 0 3rem;
+}
+
+.search-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.search-box,
+.select-box {
+  display: flex;
+  flex-direction: column;
+}
+

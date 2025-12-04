@@ -12,9 +12,13 @@ Look at their level 100 implementation.
 
 Compare their implementation to yours. Think:
 1. How is it different?
+A. My partner used template in html to create the design while i used js to create the elements.
 2. What do you prefer about your implementation?
+A. creating the elements in js seem simpler and efficient. And the summary truncation makes the cards look uniform.
 3. What do you prefer about their implementation?
+A. The use of Semantic HTML which improves accessibility, SEO, and structure.
 4. What did you learn that you didn't know before?
+A. That i could use map function to loop through every item in the array to show the move cards.
 
 They should do the same with your repository.
 
@@ -39,11 +43,11 @@ Level 200 is all about being able to filter episodes.
 Add a live search input which meets the following requirements:
 
 When a user types a search term into the search box:
-1. Only episodes whose summary **OR** name contains the search term should be displayed
-2. The search should be case-**in**sensitive
-3. The display should update **immediately** after each keystroke changes the input
-4. Display how many episodes match the current search
-5. If the search box is cleared, **all** episodes should be shown
+1. Only episodes whose summary **OR** name contains the search term should be displayed. --> Yes
+2. The search should be case-**in**sensitive --Yes
+3. The display should update **immediately** after each keystroke changes the input --Yes
+4. Display how many episodes match the current search --Yes
+5. If the search box is cleared, **all** episodes should be shown --Yes
 
 Send a pull request to your partner's repo with this functionality. Have them review, and when happy, merge your PR.
 
