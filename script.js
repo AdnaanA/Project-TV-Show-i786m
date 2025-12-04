@@ -122,12 +122,35 @@ async function getAllEpisodes() {
 	try {
 		const url = 'https://api.tvmaze.com/shows/82/episodes';
 		const response = await fetch(url);
+
+		if (!response.ok) {
+			throw new Error(
+				`HTTP Error: ${response.status} ${response.statusText}`
+			);
+		}
+
 		const data = await response.json();
 		rootElem.innerHTML = '';
 		return data;
 	} catch (error) {
-		rootElem.innerHTML =
-			'<p>Failed to load episodes. Please try again later.</p>';
+		console.error('Failed to fetch episodes:', error);
+
+		const errorMessage =
+			error instanceof Error ? error.message : 'Unknown error';
+		const retryButton = document.createElement('button');
+		retryButton.textContent = 'Retry';
+		retryButton.style.marginLeft = '10px';
+		retryButton.style.padding = '5px 10px';
+		retryButton.style.cursor = 'pointer';
+		retryButton.onclick = () => window.location.reload();
+
+		const errorContainer = document.createElement('div');
+		errorContainer.innerHTML = `<p>Failed to load episodes. Please try again later.</p><p style="font-size: 0.9em; color: #666;">Error details: ${errorMessage}</p>`;
+		errorContainer.appendChild(retryButton);
+
+		rootElem.innerHTML = '';
+		rootElem.appendChild(errorContainer);
+
 		return [];
 	}
 }
