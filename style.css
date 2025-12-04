@@ -81,6 +81,12 @@ header {
 	cursor: text;
 }
 
+#searchInput:focus,
+#episodeSelect:focus {
+	outline: 2px solid #007bff;
+	outline-offset: 2px;
+}
+
 .error-container {
 	padding: 2rem;
 	text-align: center;
