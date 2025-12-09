@@ -11,24 +11,37 @@
 </head>
 
 <body>
-  <div id="root">
-    <template id="episodeTemplate">
-      <article class="episode">
-        <h3>
-          <a class="episodeLink">
-            <span class="episodeName"></span> -
-            <span class="episodeCode"></span>
-          </a>
-        </h3>
-        <img class="episodeImage" width="250" height="140" alt="Episode Thumbnail"/>
-        <div class="episodeSummary"></div>
-      </article>
-    </template>
-  </div>
+  <header>
+    <label for="showSelect">Select a Show:
+      <select id="showSelect">
+      </select>
+    </label>
+    <label for="episodeSelect">Select Episode:
+      <select id="episodeSelect">
+        <option value="all">All Episodes</option>
+      </select>
+    </label>
+    <label for="searchInput">Search Episodes:
+      <input type="text" id="searchInput" placeholder="Type to search..." />
+    </label>
+    <span id="episodeCount"></span>
+  </header>
+  <div id="root"></div>
   <footer>Data from : <a href="https://www.tvmaze.com/">TVMaze.com</a></footer>
-  <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
-  <script src="episodes.js"></script>
-
+  <!-- Template -->
+  <template id="episodeTemplate">
+    <article class="episode">
+      <h3>
+        <a class="episodeLink">
+          <span class="episodeName"></span> -
+          <span class="episodeCode"></span>
+        </a>
+      </h3>
+      <img class="episodeImage" width="250" height="140"
+        alt="Episode Thumbnail" />
+      <div class="episodeSummary"></div>
+    </article>
+  </template>
   <!-- Loads YOUR javascript code -->
   <script src="script.js"></script>
 </body>

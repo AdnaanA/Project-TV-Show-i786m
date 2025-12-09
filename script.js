@@ -223,7 +223,7 @@ async function getAllEpisodes(rootElem) {
   rootElem.appendChild(loadingContainer);
 
   try {
-	const url = `https://api.tvmaze.com/shows/${showSelect.value}/episodes`;
+    const url = `https://api.tvmaze.com/shows/${showSelect.value}/episodes`;
     const response = await fetch(url);
 
     if (!response.ok) {
